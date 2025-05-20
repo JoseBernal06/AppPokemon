@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
 interface Pokemon {
   name: string;
@@ -11,15 +12,17 @@ interface Pokemon {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, IonicModule, FormsModule],
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
   pokemons: any[] = [];
+  allPokemons: any[] = [];
   offset = 0;
-  limit = 20;
+  limit = 500;
   loading = false;
+  searchText: string = '';
 
   constructor(private http: HttpClient) {}
 
@@ -27,42 +30,59 @@ export class HomePage implements OnInit {
     this.loadPokemons();
   }
 
-  loadPokemons(event?: any) {
+  async loadPokemons(event?: any) {
     if (this.loading) return;
     this.loading = true;
 
-    this.http
-      .get<any>(`https://pokeapi.co/api/v2/pokemon?offset=${this.offset}&limit=${this.limit}`)
-      .subscribe((res) => {
-        // Realiza una segunda llamada para obtener los detalles completos de cada Pokémon
-        const pokemonRequests = res.results.map((pokemon: Pokemon) => 
-          this.http.get<any>(pokemon.url).toPromise()
-        );
+    try {
+      const res = await this.http
+        .get<any>(`https://pokeapi.co/api/v2/pokemon?offset=${this.offset}&limit=${this.limit}`)
+        .toPromise();
 
-        // Espera a que todas las solicitudes de detalles de los Pokémon se resuelvan
-        Promise.all(pokemonRequests).then((pokemonDetails) => {
-          this.pokemons = [...this.pokemons, ...pokemonDetails];
-          this.offset += this.limit;
-          this.loading = false;
+      const pokemonRequests = res.results.map((pokemon: Pokemon) =>
+        this.http.get<any>(pokemon.url).toPromise()
+      );
 
-          if (event) {
-            event.target.complete();
-          }
+      const pokemonDetails = await Promise.all(pokemonRequests);
 
-          // Desactiva el scroll infinito si ya no hay más Pokémon
-          if (res.next === null && event) {
-            event.target.disabled = true;
-          }
-        }).catch(() => {
-          this.loading = false;
-          if (event) {
-            event.target.complete();
-          }
-        });
-      });
+      // Añadir propiedad para mostrar u ocultar detalles
+      const detallesConEstado = pokemonDetails.map(p => ({ ...p, showDetails: false }));
+
+      this.allPokemons = [...this.allPokemons, ...detallesConEstado];
+      this.offset += this.limit;
+      this.buscarPokemon(); // Aplicar filtro activo
+
+      if (event) {
+        event.target.complete();
+        if (res.next === null) {
+          event.target.disabled = true;
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar Pokémon', error);
+      if (event) event.target.complete();
+    } finally {
+      this.loading = false;
+    }
   }
 
-  getImageUrl(index: number): string {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`;
+  buscarPokemon() {
+    const texto = this.searchText.trim().toLowerCase();
+
+    if (!texto) {
+      this.pokemons = [...this.allPokemons];
+    } else {
+      this.pokemons = this.allPokemons.filter(p =>
+        p.name.toLowerCase().includes(texto)
+      );
+    }
+  }
+
+  toggleDetalles(pokemon: any) {
+    pokemon.showDetails = !pokemon.showDetails;
+  }
+
+  getImageUrl(pokemon: any): string {
+    return pokemon?.sprites?.front_default || 'assets/placeholder.png';
   }
 }

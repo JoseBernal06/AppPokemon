@@ -25,3 +25,45 @@
 #container a {
   text-decoration: none;
 }
+
+.contenido{
+  text-align: center;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.lugar-pokemon{
+  background-color: rgb(78, 142, 144);
+}
+
+.nombre{
+  font-size: 20px;
+  font: bold;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.button-ver{
+  background-color: rgb(121, 121, 198);
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.buscador{
+  justify-content: center;
+  display: flex;
+  gap: 10px;
+}
+
+.titulo{
+  text-align: center;
+  padding: 20px;
+}
+
+.boton-buscar{
+  background-color:rgb(71, 206, 172);
+  color: black;
+  padding: 10px;
+  border-radius: 5px; 
+}
+
