@@ -1,6 +1,5 @@
 #container {
   text-align: center;
-
   position: absolute;
   left: 0;
   right: 0;
@@ -16,9 +15,7 @@
 #container p {
   font-size: 16px;
   line-height: 22px;
-
   color: #8c8c8c;
-
   margin: 0;
 }
 
@@ -30,6 +27,8 @@
   text-align: center;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 15px;
 }
 
 .lugar-pokemon{
@@ -47,23 +46,44 @@
   color: black;
   padding: 10px;
   border-radius: 5px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .buscador{
   justify-content: center;
   display: flex;
   gap: 10px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: center;
 }
 
 .titulo{
   text-align: center;
   padding: 20px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .boton-buscar{
   background-color:rgb(71, 206, 172);
   color: black;
   padding: 10px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   border-radius: 5px; 
+}
+
+.boton-refrescar{
+  background-color:rgb(136, 164, 242);
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif; 
+}
+
+.refrescar{
+  justify-content: center;
+  display: flex;
+  margin: 10px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: center;
 }
 

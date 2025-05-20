@@ -3,16 +3,22 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <!-- Buscador -->
   <div class="buscador">
     <input
       type="text"
       [(ngModel)]="searchText"
       placeholder="Buscar Pokémon"
-      (ngModelChange)="buscarPokemon()" />
-
+    />
     <button class="boton-buscar" (click)="buscarPokemon()">Buscar</button>
   </div>
 
+  <!-- Botón refrescar -->
+  <div class="refrescar">
+    <button class="boton-refrescar" (click)="refrescarPokemons()">Refrescar</button>
+  </div>
+
+  <!-- Lista de Pokémon -->
   <ion-grid class="contenido">
     <div *ngFor="let pokemon of pokemons; let i = index">
       <ion-card>
@@ -22,33 +28,56 @@
         </ion-card-header>
 
         <ion-card-content>
+          <!-- Botón de ver/ocultar detalles -->
           <div>
             <button class="button-ver" (click)="toggleDetalles(pokemon)">
               {{ pokemon.showDetails ? 'Ocultar detalles' : 'Ver detalles' }}
             </button>
           </div>
 
+          <!-- Detalles del Pokémon -->
           <div *ngIf="pokemon.showDetails">
             <ion-label>
               <h2>Tipo</h2>
               <p *ngFor="let type of pokemon.types">{{ type.type.name | titlecase }}</p>
             </ion-label>
+
             <ion-label>
               <h2>Habilidades</h2>
               <p *ngFor="let ability of pokemon.abilities">{{ ability.ability.name | titlecase }}</p>
             </ion-label>
+
             <ion-label>
               <h2>Estadísticas</h2>
               <p *ngFor="let stat of pokemon.stats">
                 {{ stat.stat.name | titlecase }}: {{ stat.base_stat }}
               </p>
             </ion-label>
+
+            <!-- Reseña automática -->
+            <div>
+              <ion-item>
+                <ion-input
+                  placeholder="Escribe una reseña"
+                  [(ngModel)]="pokemon.opinion"
+                ></ion-input>
+                <ion-button
+                  slot="end"
+                  (click)="guardarOpinion(pokemon)"
+                  [disabled]="!pokemon.opinion"
+                  class="boton-opinion"
+                >
+                  Guardar reseña
+                </ion-button>
+              </ion-item>
+            </div>
           </div>
         </ion-card-content>
       </ion-card>
     </div>
   </ion-grid>
 
+  <!-- Scroll infinito -->
   <ion-infinite-scroll
     (ionInfinite)="loadPokemons($event)"
     threshold="100px"
